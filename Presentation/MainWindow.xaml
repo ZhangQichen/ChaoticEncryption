@@ -1,0 +1,50 @@
+﻿<Window x:Class="Presentation.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Presentation" Height="560" Width="840" ResizeMode="NoResize">
+    <Grid>
+        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Plain Text:" VerticalAlignment="Top" FontSize="20"/>
+        <TextBox HorizontalAlignment="Left" Height="100" Margin="10,40,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416" FontSize="15" Name="TextBok_PlainText" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,177,0,0" TextWrapping="Wrap" Text="Cipher:" VerticalAlignment="Top" FontSize="20"/>
+        <TextBox HorizontalAlignment="Left" Height="100" Margin="10,207,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416" FontSize="15" Name="TextBok_Cipher"  AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+        <Button Content="Encode" HorizontalAlignment="Left" VerticalAlignment="Top" Width="87" Margin="339,145,0,0" FontSize="20" Name="Bth_Encode" Click="Bth_Encode_Click"/>
+        <Button Content="Decode" HorizontalAlignment="Left" Margin="339,312,0,0" VerticalAlignment="Top" Width="87" FontSize="20" Name="Btn_Decode" Click="Btn_Decode_Click"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,356,0,0" TextWrapping="Wrap" Text="Decoded Text:" VerticalAlignment="Top" FontSize="20"/>
+        <TextBox HorizontalAlignment="Left" Height="100" Margin="10,386,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="416" FontSize="15" Name="TextBok_DecodedText" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+        <Grid HorizontalAlignment="Left" Height="511" Margin="431,10,0,0" VerticalAlignment="Top" Width="393">
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="215" Margin="10,10,0,0" VerticalAlignment="Top" Width="373">
+                <Grid>
+                    <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="Wheel-Switch Parameters" VerticalAlignment="Top" Width="190" FontSize="15" Margin="90,10,91,0"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="61,40,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="r:" FontSize="15" RenderTransformOrigin="0.889,0.553"/>
+                    <TextBox HorizontalAlignment="Left" Height="19" Margin="75,40,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="124" FontSize="15" Name="TextBox_WS_r"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="204,40,0,0" TextWrapping="Wrap" Text="Within [3.57, 4]" VerticalAlignment="Top" FontSize="15" Width="111"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="48,69,0,0" TextWrapping="Wrap" Text="X0:" VerticalAlignment="Top" FontSize="15"/>
+                    <TextBox HorizontalAlignment="Left" Height="19" Margin="75,69,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="124" FontSize="15" Name="TextBox_WS_X0"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="204,69,0,0" TextWrapping="Wrap" Text="Within (0, 1)" VerticalAlignment="Top" FontSize="15"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="21,100,0,0" TextWrapping="Wrap" Text="Ke:" VerticalAlignment="Top" FontSize="15"/>
+                    <TextBox HorizontalAlignment="Left" Height="40" Margin="48,100,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="206" FontSize="15" Name="TextBox_WS_Ke" VerticalScrollBarVisibility="Auto"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="263,125,0,0" TextWrapping="Wrap" Text="Max 256bits" VerticalAlignment="Top" FontSize="15"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="20,153,0,0" TextWrapping="Wrap" Text="Kd:" VerticalAlignment="Top" FontSize="15"/>
+                    <TextBox HorizontalAlignment="Left" Height="40" Margin="48,153,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="205" FontSize="15" Name="TextBox_WS_Kd" VerticalScrollBarVisibility="Auto"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="258,174,0,0" TextWrapping="Wrap" Text="Max 256bits" VerticalAlignment="Top" FontSize="15"/>
+
+                </Grid>
+            </Border>
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="206" Margin="10,230,0,0" VerticalAlignment="Top" Width="373">
+                <Grid>
+                    <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="NCM Parameters" VerticalAlignment="Top" Width="130" Margin="0,10,0,0" FontSize="15"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="48,41,0,0" TextWrapping="Wrap" Text="X0:" VerticalAlignment="Top" FontSize="15"/>
+                    <TextBox HorizontalAlignment="Left" Height="21" Margin="75,41,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="124" FontSize="15" Name="TextBox_NCM_X0"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="204,43,0,0" TextWrapping="Wrap" Text="Within (0, 1)" VerticalAlignment="Top" FontSize="15"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="48,79,0,0" TextWrapping="Wrap" Text="a:" VerticalAlignment="Top" FontSize="15"/>
+                    <TextBox HorizontalAlignment="Left" Height="21" Margin="65,79,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="110" FontSize="15" Name="TextBox_NCM_a"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="180,79,0,0" TextWrapping="Wrap" Text="b:" VerticalAlignment="Top" FontSize="15"/>
+                    <TextBox HorizontalAlignment="Left" Height="21" Margin="198,79,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="110" FontSize="15" Name="TextBox_NCM_b"/>
+                    <TextBlock HorizontalAlignment="Left" Margin="48,105,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="15" Height="84" Width="272"><Run Text="Scope of a and b:"/><LineBreak/><Run Text="a within (0, 1.4), b within (5, 43) or"/><LineBreak/><Run Text="a within (1.4, 1.5), b within (9, 38) or"/><LineBreak/><Run Text="a within (1.5, 1.57), b within (3, 15)."/></TextBlock>
+                </Grid>
+            </Border>
+            <TextBlock HorizontalAlignment="Left" Margin="10,441,0,0" TextWrapping="Wrap" Text="The blank block will be replaced by previous value." VerticalAlignment="Top" Height="22" Width="373" FontSize="15"/>
+            <Button Content="Set Default Parameters" HorizontalAlignment="Left" Margin="10,468,0,0" VerticalAlignment="Top" Width="373" Height="33" FontSize="20" Click="Button_Click"/>
+        </Grid>
+    </Grid>
+</Window>
