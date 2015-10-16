@@ -8,6 +8,7 @@ namespace ChaoticEncryption
 {
     public class ValueDistortion
     {
+        //
         private ChaoticSequenceGenerator m_SeqGenerator;
 
         private Byte[] m_GenerateDistortionSequence(int length)
