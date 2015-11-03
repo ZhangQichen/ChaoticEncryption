@@ -18,6 +18,12 @@ namespace ChaoticEncryption
         private double m_a = 0.7;
         private double m_b = 28.0;
 
+        public double m_CalculateNextNumber()
+        {
+            return m_xn =
+                (1 - Math.Pow(m_b, -4.0)) * Utils.Ctan(m_a / (1 + m_b)) * Math.Pow(1 + 1 / m_b, m_b) * Math.Tan(m_a * m_xn) * Math.Pow(1 - m_xn, m_b);
+        }
+
         public Double ControlParameterA
         {
             set { m_a = value; }
@@ -30,12 +36,10 @@ namespace ChaoticEncryption
             get { return m_b; }
         }
 
-        public double m_CalculateNextNumber()
-        {
-            return m_xn =
-                (1 - Math.Pow(m_b, -4.0)) * Utils.Ctan(m_a / (1 + m_b)) * Math.Pow(1 + 1 / m_b, m_b) * Math.Tan(m_a * m_xn) * Math.Pow(1 - m_xn, m_b);
-        }
-
+        /// <summary>
+        /// Construct with default values.
+        /// a = 0.7, b = 28.0
+        /// </summary>
         public NCM() { }
         /// <summary>
         /// 
@@ -52,6 +56,11 @@ namespace ChaoticEncryption
             this.m_b = b;
         }
 
+        /// <summary>
+        /// Generate chaotic sequence in bytes.
+        /// </summary>
+        /// <param name="length">The length of generated sequence</param>
+        /// <returns></returns>
         override public Byte[] GenerateSequence(int length)
         {
             List<Byte> seq = new List<Byte>();

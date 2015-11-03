@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using System.Drawing;
 
 namespace ChaoticEncryption
 {
-    class Utils
+    static class Utils
     {
         public static double Ctan(double x)
         {
@@ -52,6 +54,26 @@ namespace ChaoticEncryption
             T tmp = lhs;
             lhs = rhs;
             rhs = tmp;
+        }
+
+        public static class IO
+        {
+            public static void WritePictureInCsvFile(String filename, Bitmap picture)
+            {
+                FileStream fs = new FileStream(filename, FileMode.OpenOrCreate);
+                StreamWriter sw = new StreamWriter(fs);
+                for (int j = 0; j < picture.Height; ++j)
+                {
+                    for (int i = 0; i < picture.Width; ++i)
+                    {
+                        sw.Write(picture.GetPixel(i, j).ToArgb());
+                        sw.Write(',');
+                    }
+                    //sw.Write('\n');
+                }
+                sw.Close();
+                fs.Close();
+            }
         }
     }
 }

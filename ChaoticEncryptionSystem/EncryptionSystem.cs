@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 using System.IO;
 
 namespace ChaoticEncryption
@@ -10,12 +11,16 @@ namespace ChaoticEncryption
     public class EncryptionSystem
     {
         protected ValueDistortion m_ValueDistortionSystem = null;
+
         protected PositionDistortion m_PositionDistortionSystem = null;
 
         protected static Byte[] mDefaultParameters;
         
-        protected EncryptionSystem()
-        { }
+        public EncryptionSystem()
+        {
+            m_ValueDistortionSystem = new ValueDistortion(new NCM());
+            m_PositionDistortionSystem = new PositionDistortion(new WheelSwitch());
+        }
 
         public static Double DefaultX0_WheelSwitch
         {
@@ -35,7 +40,7 @@ namespace ChaoticEncryption
 
         public static Double DefaultX0_NCM
         {
-            get { return 0.566; }
+            get { return 0.666; }
         }
 
         public static Double DefaultA_NCM
@@ -50,25 +55,10 @@ namespace ChaoticEncryption
 
         static EncryptionSystem()
         {
-            List<Byte> decodingParameters = new List<byte>();
-
-            decodingParameters.AddRange(BitConverter.GetBytes(DefaultX0_WheelSwitch));
-            decodingParameters.AddRange(BitConverter.GetBytes(DefaultR_WheelSwitch));
-
-            m_Ke.AddRange(BitConverter.GetBytes(UInt32.MaxValue));
-            m_Ke.AddRange(BitConverter.GetBytes(UInt32.MaxValue));
-            m_Ke.AddRange(BitConverter.GetBytes(UInt32.MaxValue));
-            m_Ke.AddRange(BitConverter.GetBytes(UInt32.MaxValue));
-            m_Ke.AddRange(BitConverter.GetBytes(UInt32.MaxValue));
-            m_Ke.AddRange(BitConverter.GetBytes(UInt32.MaxValue));
-            m_Ke.AddRange(BitConverter.GetBytes(UInt32.MaxValue));
-            m_Ke.AddRange(BitConverter.GetBytes(UInt32.MaxValue));
-
-            decodingParameters.AddRange(DefaultKe_WheelSwicth.ToArray());
-            decodingParameters.AddRange(BitConverter.GetBytes(DefaultX0_NCM));
-            decodingParameters.AddRange(BitConverter.GetBytes(DefaultA_NCM));
-            decodingParameters.AddRange(BitConverter.GetBytes(DefaultB_NCM));
-            mDefaultParameters = decodingParameters.ToArray();
+            m_Ke.AddRange(Encoding.Default.GetBytes("ChaosEncryptionSysNcmWheelSwitch"));
+            mDefaultParameters = GenerateParameters(DefaultX0_WheelSwitch, DefaultR_WheelSwitch,
+                "ChaosEncryptionSysNcmWheelSwitch", DefaultX0_NCM, DefaultA_NCM, DefaultB_NCM);
+            m_Ke.Add(1);
         }
 
         public Byte[] DistortValue(Byte[] plainText)
@@ -124,7 +114,7 @@ namespace ChaoticEncryption
             Double b = BitConverter.ToDouble(parameters, 64);
             
             // Construct System
-            Byte[] K_d = WheelSwitch.KeyGenerator(K_e, plainText);
+            Byte[] K_d = WheelSwitch.GenerateDecodingKey(K_e, plainText);
             WheelSwitch ws = new WheelSwitch(X0, r, K_d);
             NCM ncm = new NCM(X0_ncm, a, b);
             EncryptionSystem encryptionSystem = new EncryptionSystem();
@@ -179,6 +169,40 @@ namespace ChaoticEncryption
         }
 
         /// <summary>
+        /// Generate parameters in Byte array. "_ws" means paramters for WheelSwitch and "_ncm" means parameters for NCM.
+        /// </summary>
+        /// <param name="x0_ws"></param>
+        /// <param name="r_ws"></param>
+        /// <param name="key_ws">If length less than 32 bytes, append 0x1 and if more than 32 bytes, discard extra bytes.</param>
+        /// <param name="x0_ncm"></param>
+        /// <param name="a_ncm"></param>
+        /// <param name="b_ncm"></param>
+        /// <returns></returns>
+        public static Byte[] GenerateParameters(Double x0_ws, Double r_ws, String key_ws, Double x0_ncm, Double a_ncm, Double b_ncm)
+        {
+            List<Byte> paramsList = new List<byte>();
+            paramsList.AddRange(BitConverter.GetBytes(x0_ws));
+            paramsList.AddRange(BitConverter.GetBytes(r_ws));
+
+            int l = Encoding.Default.GetByteCount(key_ws);
+            if (l < 32)
+            {
+                l = 32 - l;
+                paramsList.AddRange(Encoding.Default.GetBytes(key_ws));
+                while (l-- > 0)
+                    paramsList.Add(0x1);
+            }
+            else
+            {
+                paramsList.AddRange(Encoding.Default.GetBytes(key_ws.Substring(0, 32)));
+            }
+            paramsList.AddRange(BitConverter.GetBytes(x0_ncm));
+            paramsList.AddRange(BitConverter.GetBytes(a_ncm));
+            paramsList.AddRange(BitConverter.GetBytes(b_ncm));
+            return paramsList.ToArray();
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="plainText"></param>
@@ -188,39 +212,5 @@ namespace ChaoticEncryption
         {
             return Encode(plainText, mDefaultParameters, out cipher);
         }
-        /*
-        public static void Main()
-        {
-            Byte[] plainTextInBytes;
-            Byte[] cipherInBytes;
-            Byte[] decodingKey;
-            Byte[] buffer = new Byte[1024];
-            FileStream fs = new FileStream("testInput.txt", FileMode.Open);
-            BinaryReader sr = new BinaryReader(fs);
-            List<Byte> list = new List<byte>();
-            while (sr.Read(buffer, 0, 1024) > 0)
-            {
-                list.AddRange(buffer);
-            }
-            sr.Close();
-            fs.Close();
-            
-            plainTextInBytes = list.ToArray();
-            
-            decodingKey = EncryptionSystem.EncodeWithDefaultParamters(plainTextInBytes, out cipherInBytes);
-
-            fs = new FileStream("EncodedFile.txt", FileMode.OpenOrCreate);
-            BinaryWriter bw = new BinaryWriter(fs);
-            bw.Write(cipherInBytes);
-            bw.Close();
-            fs.Close();
-            
-            EncryptionSystem.Decode(cipherInBytes, decodingKey, out plainTextInBytes);
-            fs = new FileStream("DecodedFile.txt", FileMode.OpenOrCreate);
-            bw = new BinaryWriter(fs);
-            bw.Write(plainTextInBytes);
-            bw.Close();
-            fs.Close();
-        }*/
     }
 }

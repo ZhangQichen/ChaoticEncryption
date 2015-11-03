@@ -12,6 +12,15 @@ namespace ChaoticEncryption
         protected double m_xn;
 
         /// <summary>
+        /// Generate byte sequence.
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        abstract public Byte[] GenerateSequence(int length);
+
+        //The remaining part includes constructors and  
+
+        /// <summary>
         /// Initial value X0 for any chaotic function that inherits this class.
         /// </summary>
         public Double InitialValueX0
@@ -32,12 +41,5 @@ namespace ChaoticEncryption
         {
             m_xn = m_x0;
         }
-
-        /// <summary>
-        /// Generate byte sequence.
-        /// </summary>
-        /// <param name="length"></param>
-        /// <returns></returns>
-        abstract public Byte[] GenerateSequence(int length);
     }
 }

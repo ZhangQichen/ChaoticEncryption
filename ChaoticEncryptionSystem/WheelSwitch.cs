@@ -45,6 +45,10 @@ namespace ChaoticEncryption
             get { return m_Q; }
         }
 
+        /// <summary>
+        /// Construct with default values:
+        /// r = 3.585, Q = {2, 1, 0}.
+        /// </summary>
         public WheelSwitch() : base()
         {
             m_Q = new Byte[3] { 2, 1, 0 };
@@ -61,7 +65,7 @@ namespace ChaoticEncryption
             m_Restore();
         }
 
-        public double m_CalculateNextNumber()
+        private double m_CalculateNextNumber()
         {
             if (m_Q[m_itr_Q] % 3 == 0 )
             {
@@ -89,10 +93,12 @@ namespace ChaoticEncryption
         /// <summary>
         /// KD = KE + sum(Each byte of plainText);
         /// </summary>
-        /// <param name="encodingKey">Encoding Key in bytes</param>
+        /// <param name="encodingKey">Encoding Key in bytes. 32bytes</param>
         /// <returns>Decoding Key in bytes</returns>
-        public static Byte[] KeyGenerator(Byte[] encodingKey, Byte[] plainText)
+        public static Byte[] GenerateDecodingKey(Byte[] encodingKey, Byte[] plainText)
         {
+            if (encodingKey.Length != 32)
+                throw new Exception("Encoding Key length must be 32bytes. Current one is " + encodingKey.Length + "bytes");
             int itr_K = 0;
             int length = encodingKey.Length;
             Byte[] decodingKey = (Byte[])encodingKey.Clone();
