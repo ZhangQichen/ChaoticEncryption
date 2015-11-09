@@ -296,8 +296,40 @@ namespace ChaoticEncryption
 
         public static void Main()
         {
-            //EncryptPicture("sysu.jpg");
-            AlgoAnalysis();
+            int number = 200;
+            NCM ncm = new NCM(0.5, 0.7, 28);
+            FileStream fs = new FileStream("NCM.csv", FileMode.OpenOrCreate);
+            StreamWriter sw = new StreamWriter(fs);
+            byte[] bs;
+
+            bs = ncm.GenerateSequence(number);
+            sw.Write(String.Format("x0={0} a={1} b={2},", 0.5, 0.7, 28));
+            foreach (byte b in bs)
+            {
+                sw.Write(b); sw.Write(',');
+            }
+            sw.Write('\n');
+
+            ncm = new NCM(0.5, 1.45, 23);
+            bs = ncm.GenerateSequence(number);
+            sw.Write(String.Format("x0={0} a={1} b={2},", 0.5, 1.45, 23));
+            foreach (byte b in bs)
+            {
+                sw.Write(b); sw.Write(',');
+            }
+            sw.Write('\n');
+
+            ncm = new NCM(0.5, 1.53, 9);
+            bs = ncm.GenerateSequence(number);
+            sw.Write(String.Format("x0={0} a={1} b={2},", 0.5, 1.53, 9));
+            foreach (byte b in bs)
+            {
+                sw.Write(b); sw.Write(',');
+            }
+            sw.Write('\n');
+
+            sw.Close();
+            fs.Close();
         }
     }
 }
