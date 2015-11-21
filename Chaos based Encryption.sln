@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChaoticEncryption", "ChaoticEncryptionSystem\ChaoticEncryption.csproj", "{77A52FF7-F9ED-4E93-8D32-46BAC48499D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation", "Presentation\Presentation.csproj", "{B1E0BAD6-340C-4355-AA28-644A47DB4B15}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "File Encryptor", "Presentation\File Encryptor.csproj", "{B1E0BAD6-340C-4355-AA28-644A47DB4B15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

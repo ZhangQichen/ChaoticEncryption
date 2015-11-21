@@ -71,5 +71,7 @@ namespace ChaoticEncryption
             m_Restore();
             return seq.GetRange(0, length).ToArray();
         }
+
+
     }
 }

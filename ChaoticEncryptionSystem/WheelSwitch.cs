@@ -92,6 +92,7 @@ namespace ChaoticEncryption
 
         /// <summary>
         /// KD = KE + sum(Each byte of plainText);
+        /// Decoding Key is also controling sequence.
         /// </summary>
         /// <param name="encodingKey">Encoding Key in bytes. 32bytes</param>
         /// <returns>Decoding Key in bytes</returns>
@@ -101,7 +102,7 @@ namespace ChaoticEncryption
                 throw new Exception("Encoding Key length must be 32bytes. Current one is " + encodingKey.Length + "bytes");
             int itr_K = 0;
             int length = encodingKey.Length;
-            Byte[] decodingKey = (Byte[])encodingKey.Clone();
+            Byte[] decodingKey = (Byte[])encodingKey.Clone(); // The length is the same.
             foreach(Byte b in plainText)
             {
                 decodingKey[(itr_K++) % length] += b;

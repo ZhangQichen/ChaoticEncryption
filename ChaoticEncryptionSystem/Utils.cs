@@ -8,7 +8,7 @@ using System.Drawing;
 
 namespace ChaoticEncryption
 {
-    static class Utils
+    public static class Utils
     {
         public static double Ctan(double x)
         {
@@ -54,6 +54,60 @@ namespace ChaoticEncryption
             T tmp = lhs;
             lhs = rhs;
             rhs = tmp;
+        }
+
+        public static Byte[] StringToBytes(String str)
+        {
+            List<Byte> list = new List<byte>();
+            Byte v = 0;
+            bool isByteEnd = false;
+            foreach (char c in str)
+            {
+                if (c.Equals('-')) continue;
+                if (c.CompareTo('0') >= 0 && c.CompareTo('9') <= 0)
+                {
+                    if (!isByteEnd)
+                    {
+                        v += (Byte)(c - '0');
+                        isByteEnd = true;
+                    }
+                    else
+                    {
+                        v += (Byte)(16 * ((Byte)(c - '0')));
+                        list.Add(v);
+                        isByteEnd = false;
+                    }
+                }
+                else if (c.CompareTo('a') >= 0 && c.CompareTo('f') <= 0)
+                {
+                    if (!isByteEnd)
+                    {
+                        v += (Byte)(c - 'a' + 10);
+                        isByteEnd = true;
+                    }
+                    else
+                    {
+                        v += (Byte)(16 * ((Byte)(c - 'a' + 10)));
+                        list.Add(v);
+                        isByteEnd = false;
+                    }
+                }
+                else if (c.CompareTo('A') >= 0 && c.CompareTo('F') <= 0)
+                {
+                    if (!isByteEnd)
+                    {
+                        v += (Byte)(c - 'A' + 10);
+                        isByteEnd = true;
+                    }
+                    else
+                    {
+                        v += (Byte)(16 * ((Byte)(c - 'A' + 10)));
+                        list.Add(v);
+                        isByteEnd = false;
+                    }
+                }
+            }
+            return list.ToArray();
         }
 
         public static class IO

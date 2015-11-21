@@ -14,244 +14,323 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.ComponentModel;
 using ChaoticEncryption;
+using System.Windows.Forms;
+using System.IO;
 
-namespace Presentation
+namespace FileEncryptor
 {
-    class EncryptionSystemData : INotifyPropertyChanged
-    {
-        public Double r;
-        public Double X0_ws;
-        public Byte[] Ke;
-        public Byte[] Kd;
-        public Double X0_ncm, a, b;
-        public Byte[] plainText;
-        public Byte[] cipherText;
-        public Byte[] decodedText;
-        public Byte[] decodingParamters;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(String name)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(name));
-            }
-        }
-
-        public void NotifyDataChanged()
-        {
-            OnPropertyChanged("ParameterR_SwitchWheel");
-            OnPropertyChanged("ParameterX0_SwitchWheel");
-            OnPropertyChanged("ParameterX0_NCM");
-            OnPropertyChanged("ParameterB_NCM");
-            OnPropertyChanged("ParameterA_NCM");
-            OnPropertyChanged("EncodingKey_SwitchWheel");
-            OnPropertyChanged("DecodingDey_SwitchWheel");
-            OnPropertyChanged("PlainText");
-            OnPropertyChanged("CipherText");
-            OnPropertyChanged("DecodedText");
-        }
-
-        public void SetDefaultParameters()
-        {
-            r = EncryptionSystem.DefaultR_WheelSwitch;
-            X0_ws = EncryptionSystem.DefaultX0_WheelSwitch;
-            Ke = EncryptionSystem.DefaultKe_WheelSwicth;
-            Kd = new Byte[0];
-            X0_ncm = EncryptionSystem.DefaultX0_NCM;
-            a = EncryptionSystem.DefaultA_NCM;
-            b = EncryptionSystem.DefaultB_NCM;
-            plainText = new Byte[0];
-            cipherText = new Byte[0];
-            decodedText = new Byte[0];
-        }
-
-        public EncryptionSystemData()
-        {
-            SetDefaultParameters();
-        }
-
-        public Double ParameterR_SwitchWheel
-        {
-            get { return r; }
-        }
-
-        public Double ParameterX0_SwitchWheel
-        {
-            get { return X0_ws; }
-        }
-
-        public Double ParameterX0_NCM
-        {
-            get { return X0_ncm; }
-        }
-
-        public Double ParameterB_NCM
-        {
-            get { return b; }
-        }
-
-        public Double ParameterA_NCM
-        {
-            get { return a; }
-        }
-
-        public String EncodingKey_SwitchWheel
-        {
-            get { return Encoding.Default.GetString(Ke); }
-        }
-
-        public String DecodingDey_SwitchWheel
-        {
-            get { return Encoding.Default.GetString(Kd); }
-        }
-
-        public String PlainText
-        {
-            set { plainText = Encoding.Default.GetBytes(value); OnPropertyChanged("PlainText"); }
-            get { return Encoding.Default.GetString(plainText); }
-        }
-
-        public String CipherText
-        {
-            set { cipherText = Encoding.Default.GetBytes(value); OnPropertyChanged("CipherText"); }
-            get { return Encoding.Default.GetString(cipherText); }
-        }
-
-        public String DecodedText
-        {
-            set { decodedText = Encoding.Default.GetBytes(value); OnPropertyChanged("DecodedText"); }
-            get { return Encoding.Default.GetString(decodedText); }
-        }
-    }
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private EncryptionSystemData m_data = new EncryptionSystemData();
-
-        private void m_BindData()
+        enum EncryptionWorkType
         {
-            Binding binding0 = new Binding();
-            binding0.Source = this.m_data;
-            binding0.Path = new PropertyPath("PlainText");
-            binding0.Mode = BindingMode.TwoWay;
-            this.TextBok_PlainText.SetBinding(TextBox.TextProperty, binding0);
-
-            Binding binding1 = new Binding();
-            binding1.Source = this.m_data;
-            binding1.Path = new PropertyPath("CipherText");
-            binding1.Mode = BindingMode.TwoWay;
-            this.TextBok_Cipher.SetBinding(TextBox.TextProperty, binding1);
-
-            Binding binding2 = new Binding();
-            binding2.Source = this.m_data;
-            binding2.Path = new PropertyPath("DecodedText");
-            binding2.Mode = BindingMode.TwoWay;
-            this.TextBok_DecodedText.SetBinding(TextBox.TextProperty, binding2);
-
-            Binding binding3 = new Binding();
-            binding3.Source = this.m_data;
-            binding3.Path = new PropertyPath("ParameterR_SwitchWheel");
-            binding3.Mode = BindingMode.OneWay;
-            this.TextBox_WS_r.SetBinding(TextBox.TextProperty, binding3);
-
-            Binding binding4 = new Binding();
-            binding4.Source = this.m_data;
-            binding4.Path = new PropertyPath("ParameterX0_SwitchWheel");
-            binding4.Mode = BindingMode.OneWay;
-            this.TextBox_WS_X0.SetBinding(TextBox.TextProperty, binding4);
-
-            Binding binding5 = new Binding();
-            binding5.Source = this.m_data;
-            binding5.Path = new PropertyPath("EncodingKey_SwitchWheel");
-            binding5.Mode = BindingMode.OneWay;
-            this.TextBox_WS_Ke.SetBinding(TextBox.TextProperty, binding5);
-
-            Binding binding6 = new Binding();
-            binding6.Source = this.m_data;
-            binding6.Path = new PropertyPath("DecodingDey_SwitchWheel");
-            binding6.Mode = BindingMode.OneWay;
-            this.TextBox_WS_Kd.SetBinding(TextBox.TextProperty, binding6);
-
-            Binding binding7 = new Binding();
-            binding7.Source = this.m_data;
-            binding7.Path = new PropertyPath("ParameterX0_NCM");
-            binding7.Mode = BindingMode.OneWay;
-            this.TextBox_NCM_X0.SetBinding(TextBox.TextProperty, binding7);
-
-            Binding binding8 = new Binding();
-            binding8.Source = this.m_data;
-            binding8.Path = new PropertyPath("ParameterA_NCM");
-            binding8.Mode = BindingMode.OneWay;
-            this.TextBox_NCM_a.SetBinding(TextBox.TextProperty, binding8);
-
-            Binding binding9 = new Binding();
-            binding9.Source = this.m_data;
-            binding9.Path = new PropertyPath("ParameterB_NCM");
-            binding9.Mode = BindingMode.OneWay;
-            this.TextBox_NCM_b.SetBinding(TextBox.TextProperty, binding9);
+            ENCRYPT, DECRYPT
         }
 
+        class EncryptionWorker
+        {
+            Double r = 3.588;
+            Double X0_ws = 0.566;
+            String Ke = "ChaoticEncryptionSystemNcmWSzqch";
+            Double X0_ncm = 0.666, a = 0.7, b = 28;
+            String filepath; // Directory + fileName
+            String SavePath; // Path of a folder
+            EncryptionSystem encryptionSystem;
+            EncryptionWorkType workType;
+
+            public EncryptionWorker(EncryptionWorkType type,
+                String inputPath, String outputPath,
+                double pa, double pb, double px0_ncm, double pr, double px0_ws, String pke)
+            {
+                workType = type;
+                filepath = inputPath;
+                SavePath = outputPath;
+                a = pa; b = pb; X0_ncm = px0_ncm; X0_ws = px0_ws; Ke = pke;
+            }
+            
+            public void WorkAsync(BackgroundWorker worker, DoWorkEventArgs e)
+            {
+                worker.WorkerReportsProgress = true;
+                worker.WorkerSupportsCancellation = true;
+
+                ChaoticEncryption.Builder ceb = new ChaoticEncryption.Builder();
+                ceb.SetNcmParams(a, b, X0_ncm);
+                ceb.SetWheelSwitchParams(r, X0_ws, Encoding.UTF8.GetBytes(Ke));
+
+                Byte[] buffer = new Byte[2048];
+                Byte[] cipherBlock = null;
+                FileStream inStream = null;
+                FileStream outStream = null;
+                BinaryReader br = null;
+                BinaryWriter bw = null;
+                int length = 0;
+                FileInfo fi = new FileInfo(filepath);
+                long totalSize = fi.Length;
+                long completedSize = 0;
+                try
+                {
+                    inStream = new FileStream(filepath, FileMode.Open);
+                    br = new BinaryReader(inStream);
+
+                    if (workType == EncryptionWorkType.DECRYPT)
+                    {
+                        // Set FileName
+                        // Read byteCount of filename
+                        String SaveName; // Filename to save
+                        SaveName = Encoding.UTF8.GetString(br.ReadBytes(br.ReadInt32()));
+                        SavePath = String.Concat(SavePath, '\\', SaveName);
+                        fi = new FileInfo(SavePath);
+                        if (fi.Exists)
+                        {
+                            SavePath = String.Concat(SavePath.Remove(SavePath.LastIndexOf('.')), "_Copy", SavePath.Substring(SavePath.LastIndexOf('.')));
+                        }
+                    }
+
+                    outStream = new FileStream(SavePath, FileMode.OpenOrCreate);
+                    bw = new BinaryWriter(outStream);
+
+                    if (workType == EncryptionWorkType.ENCRYPT)
+                    {
+                        // Write fileName in the output. First 4 Byte(int) is the byteCount of fileName. Then fileName in Bytes follows.
+                        String filename;
+                        filename = filepath.Substring(filepath.LastIndexOf('\\') + 1);
+                        Byte[] fnInBytes = Encoding.UTF8.GetBytes(filename);
+                        int size = fnInBytes.Length;
+                        bw.Write(size);
+                        bw.Write(fnInBytes);
+                    }
+
+                    while ((length = br.Read(buffer, 0, 2048)) > 0)
+                    {
+                        encryptionSystem = ceb.CreateSystem(buffer);
+                        if (workType == EncryptionWorkType.ENCRYPT)
+                            encryptionSystem.Encrypt(ref buffer, out cipherBlock);
+                        else
+                            encryptionSystem.Decrypt(ref buffer, out cipherBlock);
+                        bw.Write(buffer, 0, length);
+                        completedSize += length;
+                        worker.ReportProgress((int)(100 * completedSize / totalSize));
+                    }
+                }
+                catch (Exception exception)
+                {
+                    System.Windows.MessageBox.Show("Error occurs when reading file!\n" + exception.Message);
+                    worker.CancelAsync();
+                }
+                if (br != null) br.Close();
+                if (inStream != null) inStream.Close();
+                if (bw != null) bw.Close();
+                if (outStream != null) outStream.Close();
+
+                worker.ReportProgress(100);
+            }
+        }
+         
+        Double r = 3.588;
+        Double X0_ws = 0.566;
+        String Ke = "ChaoticEncryptionSystemNcmWSzqch";
+        Double X0_ncm = 0.666, a = 0.7, b = 28;
+        String inputPath; // Directory + fileName
+        String outputPath; // Path of a folder
+        BackgroundWorker BGWorker;
+        
+        public static String FILE_EXTENSION = ".cef";
+        
         public MainWindow()
         {
             InitializeComponent();
-            m_data.SetDefaultParameters();
-            m_BindData();
+            FillParams();
         }
 
-        private void Bth_Encode_Click(object sender, RoutedEventArgs e)
+        private void LockUI()
         {
-            if (this.TextBox_NCM_a.Text.Length != 0)
-                m_data.a = Convert.ToDouble(this.TextBox_NCM_a.Text);
-            if (this.TextBox_NCM_b.Text.Length != 0)
-                m_data.b = Convert.ToDouble(this.TextBox_NCM_b.Text);
-            if (this.TextBox_NCM_X0.Text.Length != 0)
-                m_data.X0_ncm = Convert.ToDouble(this.TextBox_NCM_X0.Text);
-            if (this.TextBox_WS_r.Text.Length != 0)
-                m_data.r = Convert.ToDouble(this.TextBox_WS_r.Text);
-            if (this.TextBox_WS_X0.Text.Length != 0)
-                m_data.X0_ws = Convert.ToDouble(this.TextBox_WS_X0.Text);
-            if (this.TextBox_WS_Ke.Text.Length != 0)
+            this.IsEnabled = false;
+        }
+
+        private void UnLockUI()
+        {
+            this.IsEnabled = true;
+        }
+
+        private void StartEncryptionThread()
+        {
+            this.m_ProgressBar.Value = 0.0;
+            this.m_ProgressPercentage.Content = "0%";
+            // This method runs on the main thread.
+            LockUI();
+            EncryptionWorker eworker = new EncryptionWorker(EncryptionWorkType.ENCRYPT, inputPath, outputPath, a, b, X0_ncm, r, X0_ws, Ke);
+            // Start the asynchronous operation.
+            BGWorker = new BackgroundWorker();
+            BGWorker.DoWork += BGWorker_DoWork;
+            BGWorker.ProgressChanged += BGWorker_ProgressChanged;
+            BGWorker.RunWorkerCompleted += BGWorker_RunWorkerCompleted;
+            BGWorker.RunWorkerAsync(eworker);
+        }
+
+        private void StartDecryptionThread()
+        {
+            this.m_ProgressBar.Value = 0.0;
+            this.m_ProgressPercentage.Content = "0%";
+            // This method runs on the main thread.
+            LockUI();
+            EncryptionWorker dworker = new EncryptionWorker(EncryptionWorkType.DECRYPT, inputPath, outputPath, a, b, X0_ncm, r, X0_ws, Ke);
+            // Start the asynchronous operation.
+            BackgroundWorker BGWorker = new BackgroundWorker();
+            BGWorker.DoWork += BGWorker_DoWork;
+            BGWorker.ProgressChanged += BGWorker_ProgressChanged;
+            BGWorker.RunWorkerCompleted += BGWorker_RunWorkerCompleted;
+            BGWorker.RunWorkerAsync(dworker);
+        }
+
+        private void BGWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            // This event handler is where the actual work is done.
+            // This method runs on the background thread.
+            // Get the BackgroundWorker object that raised this event.
+            System.ComponentModel.BackgroundWorker worker;
+            worker = (System.ComponentModel.BackgroundWorker)sender;
+
+            // Get the Words object and call the main method.
+            EncryptionWorker ew = (EncryptionWorker)e.Argument;
+            ew.WorkAsync(worker, e);
+        }
+
+        private void BGWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+                System.Windows.MessageBox.Show(e.Error.Message);
+            else if (e.Cancelled)
             {
-                List<Byte> bts = new List<byte>();
-                bts.AddRange(Encoding.Default.GetBytes(this.TextBox_WS_Ke.Text));
-                // 256bits = 32bytes
-                if (bts.Count < 32)
-                {
-                    while (bts.Count < 32)
-                        bts.Add(0xF);
-                }
-                m_data.Ke = bts.GetRange(0, 32).ToArray();
+                System.Windows.MessageBox.Show("Procedure Cancelled!");
+                this.m_ProgressPercentage.Content = "Cancelled";
             }
-            List<Byte> encodingParameters = new List<byte>();
-            encodingParameters.AddRange(BitConverter.GetBytes(m_data.X0_ws));
-            encodingParameters.AddRange(BitConverter.GetBytes(m_data.r));
-            encodingParameters.AddRange(m_data.Ke);
-            encodingParameters.AddRange(BitConverter.GetBytes(m_data.X0_ncm));
-            encodingParameters.AddRange(BitConverter.GetBytes(m_data.a));
-            encodingParameters.AddRange(BitConverter.GetBytes(m_data.b));
-
-            m_data.decodingParamters = EncryptionSystem.Encode(m_data.plainText, encodingParameters.ToArray(), out m_data.cipherText);
-
-            m_data.Kd = m_data.decodingParamters.ToList().GetRange(16, 32).ToArray();
-
-            m_data.NotifyDataChanged();
+            else
+            {
+                System.Windows.MessageBox.Show("Finished!");
+                this.m_ProgressPercentage.Content = "100%";
+            }
+            UnLockUI();
         }
 
-        private void Btn_Decode_Click(object sender, RoutedEventArgs e)
+        private void BGWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            EncryptionSystem.Decode(m_data.cipherText, m_data.decodingParamters, out m_data.decodedText);
-            m_data.NotifyDataChanged();
+            // This method runs on the main thread.
+            this.m_ProgressBar.Value = ((double)e.ProgressPercentage);
+            this.m_ProgressPercentage.Content = this.m_ProgressBar.Value + "%";
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void FillParams()
         {
-            m_data.SetDefaultParameters();
-            m_data.NotifyDataChanged();
+            this.TextBox_NCM_a.Text = a.ToString();
+            this.TextBox_NCM_b.Text = b.ToString();
+            this.TextBox_NCM_X0.Text = X0_ncm.ToString();
+            this.TextBox_WS_Ke.Text = Ke;
+            this.TextBox_WS_X0.Text = X0_ws.ToString();
+            this.TextBox_WS_r.Text = r.ToString();
+        }
+
+        private bool ReadParams()
+        {
+            try
+            {
+                if (this.TextBox_NCM_a.Text.Length != 0)
+                    a = Double.Parse(this.TextBox_NCM_a.Text);
+                else throw new Exception("Please enter all parameters!");
+                if (this.TextBox_NCM_b.Text.Length != 0)
+                    b = Double.Parse(this.TextBox_NCM_b.Text);
+                else throw new Exception("Please enter all parameters!");
+                if (this.TextBox_NCM_X0.Text.Length != 0)
+                    X0_ncm = Double.Parse(this.TextBox_NCM_X0.Text);
+                else throw new Exception("Please enter all parameters!");
+                if (this.TextBox_WS_X0.Text.Length != 0)
+                    X0_ws = Double.Parse(this.TextBox_WS_X0.Text);
+                else throw new Exception("Please enter all parameters!");
+                if (this.TextBox_WS_Ke.Text.Length != 0)
+                    Ke = this.TextBox_WS_Ke.Text;
+                else throw new Exception("Please enter all parameters!");
+                if (this.TextBox_WS_r.Text.Length != 0)
+                    r = Double.Parse(this.TextBox_WS_r.Text);
+                else throw new Exception("Please enter all parameters!");
+            }
+            catch (FormatException)
+            {
+                System.Windows.MessageBox.Show("Some of parameters you input is invalid!\nPlese check and re-enter.");
+                return false;
+            }
+            catch (Exception e)
+            {
+                System.Windows.MessageBox.Show(e.Message);
+                return false;
+            }
+            return true;
+        }
+        
+        private void Button_Click(object sender, RoutedEventArgs e) // Set default parameters
+        {   
+            r = 3.588;
+            X0_ws = 0.566;
+            Ke = "ChaoticEncryptionSystemNcmWSzqch";
+            X0_ncm = 0.666; a = 0.7; b = 28;
+            FillParams();
+        }
+
+        private void button_browerFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.RestoreDirectory = false;
+            if (ofd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                inputPath = ofd.FileName;
+                this.textBox_file.Text = inputPath;
+            }
+        }
+
+        private void btn_encrypt_Click(object sender, RoutedEventArgs e)
+        {
+            if (inputPath == null || inputPath.Length == 0)
+            {
+                System.Windows.MessageBox.Show("Please select a file!");
+                return;
+            }
+            if (!ReadParams())
+                return;
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = ".cef(Chaoticly Encrypted File)|*.cef";
+            if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                outputPath = sfd.FileName;
+                FileInfo fi = new FileInfo(outputPath);
+                if (fi.Exists)
+                {
+                    fi.Delete();
+                }
+                StartEncryptionThread();
+            }
+            
+        }
+
+        private void btn_decrypt_Click(object sender, RoutedEventArgs e)
+        {
+            if (inputPath == null || inputPath.Length == 0)
+            {
+                System.Windows.MessageBox.Show("Please select a file!");
+                return;
+            }
+            if (!ReadParams())
+                return;
+            if (!inputPath.Substring(inputPath.LastIndexOf('.')).Equals(FILE_EXTENSION))
+            {
+                System.Windows.MessageBox.Show(String.Format("The selected file is not a valid \"{0}\" file.", FILE_EXTENSION));
+                return;
+            }
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                outputPath = fbd.SelectedPath;
+                StartDecryptionThread();
+            }
         }
     }
 }
