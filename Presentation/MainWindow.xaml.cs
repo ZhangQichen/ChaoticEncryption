@@ -63,8 +63,8 @@ namespace FileEncryptor
                 Byte[] cipherBlock = null;
                 FileStream inStream = null;
                 FileStream outStream = null;
-                BinaryReader br = null;
-                BinaryWriter bw = null;
+                BinaryReader binaryReader = null;
+                BinaryWriter binaryWriter = null;
                 int length = 0;
                 FileInfo fi = new FileInfo(filepath);
                 long totalSize = fi.Length;
@@ -72,14 +72,15 @@ namespace FileEncryptor
                 try
                 {
                     inStream = new FileStream(filepath, FileMode.Open);
-                    br = new BinaryReader(inStream);
+                    binaryReader = new BinaryReader(inStream);
 
                     if (workType == EncryptionWorkType.DECRYPT)
                     {
                         // Set FileName
                         // Read byteCount of filename
                         String SaveName; // Filename to save
-                        SaveName = Encoding.UTF8.GetString(br.ReadBytes(br.ReadInt32()));
+                        int filenameLength = binaryReader.ReadInt32();
+                        SaveName = Encoding.UTF8.GetString(binaryReader.ReadBytes(filenameLength));
                         SavePath = String.Concat(SavePath, '\\', SaveName);
                         fi = new FileInfo(SavePath);
                         if (fi.Exists)
@@ -89,27 +90,27 @@ namespace FileEncryptor
                     }
 
                     outStream = new FileStream(SavePath, FileMode.OpenOrCreate);
-                    bw = new BinaryWriter(outStream);
+                    binaryWriter = new BinaryWriter(outStream);
 
                     if (workType == EncryptionWorkType.ENCRYPT)
                     {
                         // Write fileName in the output. First 4 Byte(int) is the byteCount of fileName. Then fileName in Bytes follows.
                         String filename;
                         filename = filepath.Substring(filepath.LastIndexOf('\\') + 1);
-                        Byte[] fnInBytes = Encoding.UTF8.GetBytes(filename);
-                        int size = fnInBytes.Length;
-                        bw.Write(size);
-                        bw.Write(fnInBytes);
+                        Byte[] fileNameInBytes = Encoding.UTF8.GetBytes(filename);
+                        int size = fileNameInBytes.Length;
+                        binaryWriter.Write(size);
+                        binaryWriter.Write(fileNameInBytes);
                     }
 
-                    while ((length = br.Read(buffer, 0, 2048)) > 0)
+                    while ((length = binaryReader.Read(buffer, 0, 2048)) > 0)
                     {
                         encryptionSystem = ceb.CreateSystem(buffer);
                         if (workType == EncryptionWorkType.ENCRYPT)
                             encryptionSystem.Encrypt(ref buffer, out cipherBlock);
                         else
                             encryptionSystem.Decrypt(ref buffer, out cipherBlock);
-                        bw.Write(buffer, 0, length);
+                        binaryWriter.Write(cipherBlock, 0, length);
                         completedSize += length;
                         worker.ReportProgress((int)(100 * completedSize / totalSize));
                     }
@@ -119,9 +120,9 @@ namespace FileEncryptor
                     System.Windows.MessageBox.Show("Error occurs when reading file!\n" + exception.Message);
                     worker.CancelAsync();
                 }
-                if (br != null) br.Close();
+                if (binaryReader != null) binaryReader.Close();
                 if (inStream != null) inStream.Close();
-                if (bw != null) bw.Close();
+                if (binaryWriter != null) binaryWriter.Close();
                 if (outStream != null) outStream.Close();
 
                 worker.ReportProgress(100);
